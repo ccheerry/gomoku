@@ -1,0 +1,6 @@
+build/
+/Gomoku
+*.gcda
+*.gcno
+compile_commands.json
+.cache/

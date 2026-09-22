@@ -1,0 +1,19 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04   # match the campus Ubuntu version found in T0.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: X11 headers (GLFW loads the libraries at runtime)
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+      - name: Build
+        run: make -j"$(nproc)"
+      - name: No relink
+        run: make -q Gomoku
+      - name: Tests (ASan + UBSan)
+        run: make -j"$(nproc)" test
+      - name: Bench (relaxed limit on shared runners)
+        run: if [ -f src/ai/bench.cpp ]; then ./Gomoku --bench --limit 1.0; fi
+      - name: Coverage (engine + ai >= 80%)
+        run: if ls src/engine/*.cpp >/dev/null 2>&1; then pipx install gcovr && make coverage; fi
