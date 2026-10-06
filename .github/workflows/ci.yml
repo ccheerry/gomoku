@@ -2,7 +2,7 @@ name: ci
 on: [push, pull_request]
 jobs:
   build-test:
-    runs-on: ubuntu-24.04   # match the campus Ubuntu version found in T0.1
+    runs-on: ubuntu-24.04   # keep in sync with the target Ubuntu release
     steps:
       - uses: actions/checkout@v4
       - name: X11 headers (GLFW loads the libraries at runtime)
